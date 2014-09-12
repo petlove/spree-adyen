@@ -199,6 +199,8 @@ module Spree
         def authorize_on_boleto(amount, source, gateway_options, boleto, options = { recurring: false })
           reference = gateway_options[:order_id]
 
+          ap gateway_options
+
           amount = { currency: "BRL", value: amount }
 
           shopper_reference = if gateway_options[:customer_id].present?
@@ -211,8 +213,6 @@ module Spree
                       :email => gateway_options[:email],
                       :ip => gateway_options[:ip],
                       :statement => "Order # #{gateway_options[:order_id]}" }
-
-                      puts "loco"
 
           response = provider.authorise_boleto_payment reference, amount, shopper, boleto, options
 
