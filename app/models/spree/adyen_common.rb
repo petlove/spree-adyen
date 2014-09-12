@@ -212,6 +212,8 @@ module Spree
                       :ip => gateway_options[:ip],
                       :statement => "Order # #{gateway_options[:order_id]}" }
 
+                      puts "loco"
+
           response = provider.authorise_boleto_payment reference, amount, shopper, boleto, options
 
           # Needed to make the response object talk nicely with Spree payment/processing api
