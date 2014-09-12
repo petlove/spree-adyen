@@ -19,8 +19,6 @@ module Spree
                :firstName => "Rodrigo",
                :lastName => "Vitulli" }
 
-        # TO DO VITULLI - reescrever método de authorize on card em adyen_commom aqui
-
         authorize_on_boleto amount, source, gateway_options, boleto
     end
 
