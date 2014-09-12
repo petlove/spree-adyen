@@ -3,7 +3,6 @@ module Spree
     extend ActiveSupport::Concern
 
     class RecurringDetailsNotFoundError < StandardError; end
-    class MissingCardSummaryError < StandardError; end
 
     included do
       preference :api_username, :string
@@ -141,14 +140,6 @@ module Spree
           response = authorize_on_card 0, source, options, card, { recurring: true }
 
           if response.success?
-            last_digits = response.additional_data["cardSummary"]
-            if last_digits.blank? && payment_profiles_supported?
-              note = "Payment was authorized but could not fetch last digits.
-                      Please request last digits to be sent back to support payment profiles"
-              raise Adyen::MissingCardSummaryError, note
-            end
-
-            source.last_digits = last_digits
             fetch_and_update_contract source, options[:customer_id]
           else
             response.error
@@ -184,6 +175,7 @@ module Spree
             end
           end
 
+          ap response
           response
         end
 
@@ -251,17 +243,6 @@ module Spree
             response = provider.authorise_payment payment.order.number, amount, shopper, card, options
 
             if response.success?
-              if payment.source.last_digits.blank?
-                last_digits = response.additional_data["cardSummary"]
-                if last_digits.blank? && payment_profiles_supported?
-                  note = "Payment was authorized but could not fetch last digits.
-                          Please request last digits to be sent back to support payment profiles"
-                  raise Adyen::MissingCardSummaryError, note
-                end
-
-                payment.source.last_digits = last_digits
-              end
-
               fetch_and_update_contract payment.source, shopper[:reference]
 
               # Avoid this payment from being processed and so authorised again
@@ -282,19 +263,21 @@ module Spree
         end
 
         def fetch_and_update_contract(source, shopper_reference)
+          # Adyen doesn't give us the recurring reference (token) so we
+          # need to reach the api again to grab the token
           list = provider.list_recurring_details(shopper_reference)
 
-          raise RecurringDetailsNotFoundError unless list.details.present?
-          card = list.details.find { |c| c[:card][:number] == source.last_digits }
-          raise RecurringDetailsNotFoundError unless card.present?
+          unless list.details.present?
+            raise RecurringDetailsNotFoundError
+          end
 
           source.update_columns(
-            month: card[:card][:expiry_date].month,
-            year: card[:card][:expiry_date].year,
-            name: card[:card][:holder_name],
-            cc_type: card[:variant],
-            last_digits: card[:card][:number],
-            gateway_customer_profile_id: card[:recurring_detail_reference]
+            month: list.details.last[:card][:expiry_date].month,
+            year: list.details.last[:card][:expiry_date].year,
+            name: list.details.last[:card][:holder_name],
+            cc_type: list.details.last[:variant],
+            last_digits: list.details.last[:card][:number],
+            gateway_customer_profile_id: list.details.last[:recurring_detail_reference]
           )
         end
     end
