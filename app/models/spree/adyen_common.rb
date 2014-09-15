@@ -214,10 +214,10 @@ module Spree
                       :ip => gateway_options[:ip],
                       :statement => "Order # #{gateway_options[:order_id]}" }
 
-          address = { :city => gateway_options[:billing_addres][:city],
-                      :state => gateway_options[:billing_addres][:state],
-                      :street => gateway_options[:billing_addres][:address1],
-                      :postal => gateway_options[:billing_addres][:zip],
+          address = { :city => gateway_options[:billing_address][:city],
+                      :state => gateway_options[:billing_address][:state],
+                      :street => gateway_options[:billing_address][:address1],
+                      :postal => gateway_options[:billing_address][:zip],
                       :firstName => "Rodrigo",
                       :firstName => "Vitulli",
           }
