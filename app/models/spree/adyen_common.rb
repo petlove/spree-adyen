@@ -213,16 +213,7 @@ module Spree
                       :email => gateway_options[:email],
                       :ip => gateway_options[:ip],
                       :statement => "Order # #{gateway_options[:order_id]}" }
-
-          address = { :city => gateway_options[:billing_address][:city],
-                      :state => gateway_options[:billing_address][:state],
-                      :street => gateway_options[:billing_address][:address1],
-                      :postal => gateway_options[:billing_address][:zip],
-                      :firstName => "Rodrigo",
-                      :firstName => "Vitulli",
           }
-
-          ap address
 
           response = provider.authorise_boleto_payment reference, amount, shopper, boleto, options
 

@@ -11,11 +11,11 @@ module Spree
     # end
 
     def authorize(amount, source, gateway_options = {})
-      boleto = { :city => "São Paulo",
-               :house => "11",
-               :postal => "03110040",
-               :state => "SP",
-               :street => "Visconde de Cairu",
+      boleto = { :city => gateway_options[:billing_address][:city],
+               :house => "111",
+               :postal => gateway_options[:billing_address][:zip],
+               :state => gateway_options[:billing_address][:state],
+               :street => gateway_options[:billing_address][:address1],
                :firstName => "Rodrigo",
                :lastName => "Vitulli" }
 
