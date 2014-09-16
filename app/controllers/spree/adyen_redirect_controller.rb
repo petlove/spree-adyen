@@ -98,7 +98,7 @@ module Spree
     private
 
       def authorized?
-        params[:authResult] == "AUTHORISED"
+        params[:authResult] == "AUTHORISED" || "RECEIVED"
       end
 
       def check_signature
