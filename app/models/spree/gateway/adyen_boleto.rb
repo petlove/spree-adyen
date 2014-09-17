@@ -18,6 +18,10 @@ module Spree
       false
     end
 
+    def source_required?
+      false
+    end
+
     def authorize(amount, source, gateway_options = {})
       boleto = { :city => gateway_options[:billing_address][:city],
                :house => "111",
