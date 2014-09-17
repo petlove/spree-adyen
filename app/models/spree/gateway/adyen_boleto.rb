@@ -14,6 +14,10 @@ module Spree
       'adyen_boleto'
     end
 
+    def require_3d_secure?(payment)
+      false
+    end
+
     def authorize(amount, source, gateway_options = {})
       boleto = { :city => gateway_options[:billing_address][:city],
                :house => "111",
@@ -22,8 +26,7 @@ module Spree
                :street => gateway_options[:billing_address][:address1],
                :firstName => "Rodrigo",
                :lastName => "Vitulli" }
-
-        authorize_on_boleto amount, source, gateway_options, boleto
+      authorize_on_boleto amount, source, gateway_options, boleto
     end
 
     # Do a symbolic authorization, e.g. 1 dollar, so that we can grab a recurring token
