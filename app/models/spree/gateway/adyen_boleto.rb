@@ -5,7 +5,7 @@ module Spree
     preference :public_key, :string
 
     def auto_capture?
-      false
+      true
     end
 
     # def payment_profiles_supported?
