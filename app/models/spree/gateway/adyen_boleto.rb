@@ -21,7 +21,7 @@ module Spree
     end
 
     def source_required?
-      true
+      false
     end
 
     def authorize(amount, source, gateway_options = {})
