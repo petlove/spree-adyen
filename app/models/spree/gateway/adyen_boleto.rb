@@ -2,6 +2,8 @@ module Spree
   class Gateway::AdyenBoleto < Gateway
     include AdyenCommon
 
+    preference :public_key, :string
+
     def auto_capture?
       false
     end
