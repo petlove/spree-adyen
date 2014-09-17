@@ -5,7 +5,7 @@ module Spree
     preference :public_key, :string
 
     def auto_capture?
-      true
+      false
     end
 
     # def payment_profiles_supported?
@@ -21,7 +21,7 @@ module Spree
     end
 
     def source_required?
-      false
+      true
     end
 
     def authorize(amount, source, gateway_options = {})
