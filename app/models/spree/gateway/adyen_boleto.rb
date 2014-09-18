@@ -8,9 +8,9 @@ module Spree
       false
     end
 
-    # def payment_profiles_supported?
-    #   true
-    # end
+    def payment_profiles_supported?
+      false
+    end
 
     def method_type
       'adyen_boleto'
