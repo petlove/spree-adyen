@@ -232,7 +232,7 @@ module Spree
         end
 
         def create_profile_on_card(payment, card)
-          unless payment.source.gateway_customer_profile_id.present?
+          # unless payment.source.gateway_customer_profile_id.present?
 
             shopper = { :reference => (payment.order.user_id.present? ? payment.order.user_id : payment.order.email),
                         :email => payment.order.email,
