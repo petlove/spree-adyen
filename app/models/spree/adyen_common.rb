@@ -265,7 +265,7 @@ module Spree
             binding.pry
 
             response
-          end
+          # end
         end
 
         def fetch_and_update_contract(source, shopper_reference)
