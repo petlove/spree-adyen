@@ -168,7 +168,7 @@ module Spree
           if response.success?
             def response.authorization; psp_reference; end
             def response.avs_result; {}; end
-            def response.cvv_result; { 'code' => result_code }; end
+            def response.cvv_result; {}; end
           else
             def response.to_s
               "#{result_code} - #{refusal_reason}"
