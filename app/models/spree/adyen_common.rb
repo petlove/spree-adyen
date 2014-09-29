@@ -50,7 +50,7 @@ module Spree
             "#{result_code} - #{refusal_reason}"
           end
         end
-        
+
         response
       end
 
@@ -68,7 +68,7 @@ module Spree
             "#{result_code} - #{refusal_reason}"
           end
         end
-        
+
         response
       end
 
@@ -245,7 +245,7 @@ module Spree
         end
 
         def create_profile_on_card(payment, card)
-          # unless payment.source.gateway_customer_profile_id.present?
+          unless payment.source.gateway_customer_profile_id.present?
 
             shopper = { :reference => (payment.order.user_id.present? ? payment.order.user_id : payment.order.email),
                         :email => payment.order.email,
@@ -274,9 +274,6 @@ module Spree
             end
 
             ap response
-
-            
-
             response
           # end
         end
