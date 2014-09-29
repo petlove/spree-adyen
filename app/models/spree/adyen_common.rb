@@ -50,7 +50,7 @@ module Spree
             "#{result_code} - #{refusal_reason}"
           end
         end
-        binding.pry
+        
         response
       end
 
@@ -68,7 +68,7 @@ module Spree
             "#{result_code} - #{refusal_reason}"
           end
         end
-        binding.pry
+        
         response
       end
 
@@ -83,7 +83,7 @@ module Spree
             refusal_reason
           end
         end
-        binding.pry
+        
         response
       end
 
@@ -98,7 +98,7 @@ module Spree
           raise Core::GatewayError.new(response.fault_message || response.refusal_reason)
         end
 
-        binding.pry
+        
       end
 
       def authorise3d(md, pa_response, ip, env)
@@ -109,7 +109,7 @@ module Spree
           }
         }
 
-        binding.pry
+        
 
         provider.authorise3d_payment(md, pa_response, ip, browser_info)
 
@@ -127,12 +127,12 @@ module Spree
         else
           { recurring: true }
         end
-        binding.pry
+        
       end
 
       def build_amount_on_profile_creation(payment)
         { currency: payment.currency, value: payment.money.money.cents }
-        binding.pry
+        
       end
 
       private
@@ -153,7 +153,7 @@ module Spree
             response.error
           end
 
-          binding.pry
+          
         end
 
         def authorize_on_card(amount, source, gateway_options, card, options = { recurring: false })
@@ -186,7 +186,7 @@ module Spree
           end
 
           ap response
-          binding.pry
+          
           response
         end
 
@@ -205,7 +205,7 @@ module Spree
           else
             provider.authorise_payment reference, amount, shopper, card, options
           end
-          binding.pry
+          
         end
 
         def authorize_on_boleto(amount, source, gateway_options, boleto, options = { recurring: false })
@@ -240,7 +240,7 @@ module Spree
           end
 
           ap response
-          binding.pry
+          
           response
         end
 
@@ -275,7 +275,7 @@ module Spree
 
             ap response
 
-            binding.pry
+            
 
             response
           # end
@@ -299,7 +299,7 @@ module Spree
             gateway_customer_profile_id: list.details.last[:recurring_detail_reference]
           )
 
-          binding.pry
+          
         end
     end
 
