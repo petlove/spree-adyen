@@ -26,7 +26,7 @@ module Spree
     # this amount might be captured from customers card. See Settings > Merchant Settings
     # in Adyen dashboard
     def create_profile(payment)
-      binding.pry
+      
       card = { :holder_name => payment.source.name,
                :number => payment.source.number,
                :cvc => payment.source.verification_value,
