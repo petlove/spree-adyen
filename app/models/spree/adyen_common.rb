@@ -185,7 +185,7 @@ module Spree
             end
           end
 
-          ap response
+          # ap response
           
           response
         end
@@ -211,7 +211,7 @@ module Spree
         def authorize_on_boleto(amount, source, gateway_options, boleto, options = { recurring: false })
           reference = gateway_options[:order_id]
 
-          ap gateway_options
+          # ap gateway_options
 
           amount = { currency: "BRL", value: amount }
 
@@ -239,7 +239,7 @@ module Spree
             end
           end
 
-          ap response
+          # ap response
           
           response
         end
@@ -273,7 +273,7 @@ module Spree
               raise Core::GatewayError.new(response.fault_message || response.refusal_reason)
             end
 
-            ap response
+            # ap response
             response
           end
         end
