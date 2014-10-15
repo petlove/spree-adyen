@@ -220,6 +220,7 @@ module Spree
             if response.success?
               if payment.source.last_digits.blank?
                 last_digits = response.additional_data["cardSummary"]
+                binding.pry
                 if last_digits.blank? && payment_profiles_supported?
                   note = "Payment was authorized but could not fetch last digits.
                           Please request last digits to be sent back to support payment profiles"
