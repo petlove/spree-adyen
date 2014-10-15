@@ -9,7 +9,6 @@ module Spree
         app.config.spree.payment_methods << Gateway::AdyenPayment
         app.config.spree.payment_methods << Gateway::AdyenHPP
         app.config.spree.payment_methods << Gateway::AdyenPaymentEncrypted
-        app.config.spree.payment_methods << Gateway::AdyenBoleto
       end
 
       initializer "spree-adyen.assets.precompile", :group => :all do |app|
@@ -19,4 +18,4 @@ module Spree
       end
     end
   end
-end
+end'
