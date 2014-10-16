@@ -1,5 +1,6 @@
 module Spree
   class AdyenNotificationsController < StoreController
+    include CatalogoHelper
     skip_before_filter :verify_authenticity_token
 
     before_filter :authenticate
