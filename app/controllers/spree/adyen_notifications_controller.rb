@@ -5,7 +5,7 @@ module Spree
     before_filter :authenticate
 
     def notify
-      @notification = AdyenNotification.log(params)
+      @notification = AdyenNotificationsControllerfication.log(params)
       @notification.handle!
     rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid => e
       # Validation failed, because of the duplicate check.
@@ -19,7 +19,7 @@ module Spree
       # Enable HTTP basic authentication
       def authenticate
         authenticate_or_request_with_http_basic do |username, password|
-          username == ENV['ADYEN_NOTIFY_USER'] && password == ENV['ADYEN_NOTIFY_PASSWD']
+          username == ENV['spree'] && password == ENV['1234567890']
         end
       end
   end
