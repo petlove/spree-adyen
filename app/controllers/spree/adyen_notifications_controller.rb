@@ -22,7 +22,7 @@ module Spree
       def authenticate
         log_debug "auth!!!!!"
         authenticate_or_request_with_http_basic do |username, password|
-          username == ENV['spree'] && password == ENV['1234567890']
+          username == 'spree' && password == '1234567890'
         end
       end
   end
