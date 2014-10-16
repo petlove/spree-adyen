@@ -7,7 +7,7 @@ module Spree
 
     def notify
       log_debug "notify!!!!!"
-      @notification = AdyenNotificationsControllerfication.log(params)
+      @notification = AdyenNotification.log(params)
       @notification.handle!
     rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid => e
       # Validation failed, because of the duplicate check.
