@@ -5,6 +5,7 @@ module Spree
     before_filter :authenticate
 
     def notify
+      log_debug "notify!!!!!"
       @notification = AdyenNotificationsControllerfication.log(params)
       @notification.handle!
     rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid => e
@@ -18,6 +19,7 @@ module Spree
     protected
       # Enable HTTP basic authentication
       def authenticate
+        log_debug "auth!!!!!"
         authenticate_or_request_with_http_basic do |username, password|
           username == ENV['spree'] && password == ENV['1234567890']
         end
