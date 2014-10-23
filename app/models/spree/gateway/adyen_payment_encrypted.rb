@@ -1,3 +1,4 @@
+require 'pry'
 module Spree
   class Gateway::AdyenPaymentEncrypted < Gateway
     include AdyenCommon
@@ -17,6 +18,7 @@ module Spree
     end
 
     def authorize(amount, source, gateway_options = {})
+      binding.pry
       card = { encrypted: { json: source.encrypted_data } }
       authorize_on_card amount, source, gateway_options, card
     end
