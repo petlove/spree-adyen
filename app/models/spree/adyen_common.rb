@@ -174,6 +174,8 @@ module Spree
                       :ip => gateway_options[:ip],
                       :statement => "Order # #{gateway_options[:order_id]}" }
 
+          binding.pry
+
           response = decide_and_authorise reference, amount, shopper, source, card, options
 
           # Needed to make the response object talk nicely with Spree payment/processing api
