@@ -1,12 +1,10 @@
 module Spree
   class AdyenNotificationsController < StoreController
-    include CatalogoHelper
     skip_before_filter :verify_authenticity_token
 
     before_filter :authenticate
 
     def notify
-      log_debug "notify!!!!!"
       @notification = AdyenNotification.log(params)
       @notification.handle!
     rescue ActiveRecord::RecordNotUnique, ActiveRecord::RecordInvalid => e
@@ -20,9 +18,8 @@ module Spree
     protected
       # Enable HTTP basic authentication
       def authenticate
-        log_debug "auth!!!!!"
         authenticate_or_request_with_http_basic do |username, password|
-          username == 'spree' && password == '1234567890'
+          username == ENV['ADYEN_NOTIFY_USER'] && password == ENV['ADYEN_NOTIFY_PASSWD']
         end
       end
   end
