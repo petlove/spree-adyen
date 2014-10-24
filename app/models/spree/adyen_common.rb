@@ -171,8 +171,7 @@ module Spree
                       :email => gateway_options[:email],
                       :ip => gateway_options[:ip],
                       :statement => "Order # #{gateway_options[:order_id]}" }
-
-          binding.pry            
+            
 
           response = decide_and_authorise reference, amount, shopper, source, card, options
 
