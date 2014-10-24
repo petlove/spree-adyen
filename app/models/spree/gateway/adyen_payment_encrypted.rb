@@ -19,6 +19,7 @@ module Spree
     def authorize(amount, source, gateway_options = {})
       card = { encrypted: { json: source.encrypted_data } }
       authorize_on_card amount, source, gateway_options, card
+      binding.pry
     end
 
     # Do a symbolic authorization, e.g. 1 dollar, so that we can grab a recurring token
@@ -29,11 +30,13 @@ module Spree
     def create_profile(payment)
       card = { encrypted: { json: payment.source.encrypted_data } }
       create_profile_on_card payment, card
+      binding.pry
     end
 
     def add_contract(source, user, shopper_ip)
       card = { encrypted: { json: source.encrypted_data } }
       set_up_contract source, card, user, shopper_ip
+      binding.pry
     end
   end
 end
