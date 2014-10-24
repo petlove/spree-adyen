@@ -159,7 +159,7 @@ module Spree
         def authorize_on_card(amount, source, gateway_options, card, options = { recurring: false })
           reference = gateway_options[:order_id]
 
-          amount = { currency: gateway_options[:currency], value: amount }
+          amount = { currency: gateway_options[:currency], value: amount, installments: gateway_options[:installments] }
 
           shopper_reference = if gateway_options[:customer_id].present?
                                 gateway_options[:customer_id]
