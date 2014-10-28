@@ -185,8 +185,6 @@ module Spree
               "#{result_code} - #{refusal_reason}"
             end
           end
-
-          # ap response
           
           response
         end
@@ -211,8 +209,6 @@ module Spree
 
         def authorize_on_boleto(amount, source, gateway_options, boleto, options = { recurring: false })
           reference = gateway_options[:order_id]
-
-          # ap gateway_options
 
           amount = { currency: "BRL", value: amount }
 
