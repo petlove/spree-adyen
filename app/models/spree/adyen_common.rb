@@ -235,8 +235,6 @@ module Spree
               "#{result_code} - #{refusal_reason}"
             end
           end
-
-          # ap response
           
           response
         end
@@ -270,7 +268,6 @@ module Spree
               raise Core::GatewayError.new(response.fault_message || response.refusal_reason)
             end
 
-            # ap response
             response
           end
         end
