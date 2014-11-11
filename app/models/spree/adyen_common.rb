@@ -210,7 +210,7 @@ module Spree
           if require_one_click_payment?(source, shopper) && recurring_detail_reference.present?
             provider.authorise_one_click_payment reference, amount, shopper, card_cvc, recurring_detail_reference
           elsif source.gateway_customer_profile_id.present?
-            provider.authorise_recurring_payment reference, amount, shopper, source.gateway_customer_profile_id
+            provider.authorise_recurring_payment reference, amount, shopper, options, source.gateway_customer_profile_id
           else
             provider.authorise_payment reference, amount, shopper, card, options
           end
