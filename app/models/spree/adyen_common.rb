@@ -190,6 +190,8 @@ module Spree
               "#{result_code} - #{refusal_reason}"
             end
           end
+
+          binding.pry
           
           response
         end
