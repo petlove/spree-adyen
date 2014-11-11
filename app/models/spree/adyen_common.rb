@@ -159,7 +159,7 @@ module Spree
         def authorize_on_card(amount, source, gateway_options, card, options = { recurring: false })
           reference = gateway_options[:order_id]
 
-          amount = { currency: gateway_options[:currency], value: amount, installments: gateway_options[:installments] }
+          amount = { currency: gateway_options[:currency], value: amount }
 
           shopper_reference = if gateway_options[:customer_id].present?
                                 gateway_options[:customer_id]
@@ -173,6 +173,10 @@ module Spree
                       :statement => "Order # #{gateway_options[:order_id]}" }
 
           
+          options.merge!({ installments: {
+                            value: gateway_options[:installments]}
+                          })
+
           binding.pry
 
           response = decide_and_authorise reference, amount, shopper, source, card, options
