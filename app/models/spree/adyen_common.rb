@@ -177,7 +177,7 @@ module Spree
                             value: gateway_options[:installments]}
                           })
 
-          
+
           response = decide_and_authorise reference, amount, shopper, source, card, options
 
           # Needed to make the response object talk nicely with Spree payment/processing api
@@ -276,6 +276,8 @@ module Spree
               logger.error("  #{response.to_yaml}")
               raise Core::GatewayError.new(response.fault_message || response.refusal_reason)
             end
+
+            binding.pry
 
             response
           end
