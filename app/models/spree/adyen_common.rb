@@ -263,7 +263,11 @@ module Spree
             amount = build_amount_on_profile_creation payment
             options = build_authorise_details payment
 
+            binding.pry
+
             response = provider.authorise_payment payment.order.number, amount, shopper, card, options
+
+            binding.pry
 
             if response.success?
               fetch_and_update_contract payment.source, shopper[:reference]
