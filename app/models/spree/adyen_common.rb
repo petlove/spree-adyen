@@ -192,6 +192,9 @@ module Spree
         end
 
         def decide_and_authorise(reference, amount, shopper, source, card, options)
+
+          binding.pry
+
           recurring_detail_reference = source.gateway_customer_profile_id
           card_cvc = source.verification_value
 
@@ -242,6 +245,9 @@ module Spree
         end
 
         def create_profile_on_card(payment, card)
+
+          binding.pry
+
           unless payment.source.gateway_customer_profile_id.present?
 
             shopper = { :reference => (payment.order.user_id.present? ? payment.order.user_id : payment.order.email),
