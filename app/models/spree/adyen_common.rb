@@ -122,10 +122,17 @@ module Spree
               accept_header: payment.request_env['HTTP_ACCEPT'],
               user_agent: payment.request_env['HTTP_USER_AGENT']
             },
-            recurring: true
+            recurring: true,
+            installments: {
+              value: payment.installments
+            }
           }
         else
-          { recurring: true }
+          { recurring: true,
+            installments: {
+              value: payment.installments
+            }
+          }
         end
         
       end
