@@ -197,15 +197,12 @@ module Spree
               "#{result_code} - #{refusal_reason}"
             end
           end
-
-          binding.pry
           
           response
         end
 
         def decide_and_authorise(reference, amount, shopper, source, card, options)
 
-          binding.pry
           
           recurring_detail_reference = source.gateway_customer_profile_id
           card_cvc = source.verification_value
@@ -258,8 +255,6 @@ module Spree
 
         def create_profile_on_card(payment, card)
 
-          binding.pry
-
           unless payment.source.gateway_customer_profile_id.present?
 
             shopper = { :reference => (payment.order.user_id.present? ? payment.order.user_id : payment.order.email),
@@ -270,11 +265,7 @@ module Spree
             amount = build_amount_on_profile_creation payment
             options = build_authorise_details payment
 
-            binding.pry
-
             response = provider.authorise_payment payment.order.number, amount, shopper, card, options
-
-            binding.pry
 
             if response.success?
               fetch_and_update_contract payment.source, shopper[:reference]
@@ -291,8 +282,6 @@ module Spree
               logger.error("  #{response.to_yaml}")
               raise Core::GatewayError.new(response.fault_message || response.refusal_reason)
             end
-
-            binding.pry
 
             response
           end
