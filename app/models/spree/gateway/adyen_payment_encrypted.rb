@@ -16,6 +16,10 @@ module Spree
       true
     end
 
+    def actions
+      %w(capture void)
+    end
+
     def authorize(amount, source, gateway_options = {})
       card = { encrypted: { json: source.encrypted_data } }
       authorize_on_card amount, source, gateway_options, card
