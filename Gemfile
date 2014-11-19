@@ -7,7 +7,8 @@ gem 'coffee-rails', '~> 4.0.0'
 gem 'sass-rails', '~> 4.0.0'
 
 gem 'adyen', github: 'rovitulli/adyen', branch: '3D-Secure-support'
-#gem 'pry-rails'
+
+gem 'therubyracer'
 
 gem 'vcr'
 gem 'webmock'
