@@ -221,37 +221,37 @@ module Spree
           
         end
 
-        def authorize_on_boleto(amount, source, gateway_options, boleto, options = { recurring: false })
-          reference = gateway_options[:order_id]
+        # def authorize_on_boleto(amount, source, gateway_options, boleto, options = { recurring: false })
+        #   reference = gateway_options[:order_id]
 
-          amount = { currency: "BRL", value: amount }
+        #   amount = { currency: "BRL", value: amount }
 
-          shopper_reference = if gateway_options[:customer_id].present?
-                                gateway_options[:customer_id]
-                              else
-                                gateway_options[:email]
-                              end
+        #   shopper_reference = if gateway_options[:customer_id].present?
+        #                         gateway_options[:customer_id]
+        #                       else
+        #                         gateway_options[:email]
+        #                       end
 
-          shopper = { :reference => shopper_reference,
-                      :email => gateway_options[:email],
-                      :ip => gateway_options[:ip],
-                      :statement => "Order # #{gateway_options[:order_id]}" }
+        #   shopper = { :reference => shopper_reference,
+        #               :email => gateway_options[:email],
+        #               :ip => gateway_options[:ip],
+        #               :statement => "Order # #{gateway_options[:order_id]}" }
           
-          response = provider.authorise_boleto_payment reference, amount, shopper, boleto, options
+        #   response = provider.authorise_boleto_payment reference, amount, shopper, boleto, options
 
-          # Needed to make the response object talk nicely with Spree payment/processing api
-          if response.success?
-            def response.authorization; psp_reference; end
-            def response.avs_result; {}; end
-            def response.cvv_result; { 'code' => result_code }; end
-          else
-            def response.to_s
-              "#{result_code} - #{refusal_reason}"
-            end
-          end
+        #   # Needed to make the response object talk nicely with Spree payment/processing api
+        #   if response.success?
+        #     def response.authorization; psp_reference; end
+        #     def response.avs_result; {}; end
+        #     def response.cvv_result; { 'code' => result_code }; end
+        #   else
+        #     def response.to_s
+        #       "#{result_code} - #{refusal_reason}"
+        #     end
+        #   end
           
-          response
-        end
+        #   response
+        # end
 
         def create_profile_on_card(payment, card)
 

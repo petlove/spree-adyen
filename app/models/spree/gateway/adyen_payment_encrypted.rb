@@ -22,6 +22,7 @@ module Spree
 
     def authorize(amount, source, gateway_options = {})
       card = { encrypted: { json: source.encrypted_data } }
+      binding.pry
       authorize_on_card amount, source, gateway_options, card
     end
 
