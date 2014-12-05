@@ -1,13 +1,13 @@
 source 'https://rubygems.org'
 
-branch = '2-3-stable'
-gem 'spree', github: 'spree/spree', branch: branch
+gem 'spree', github: 'spree/spree', branch: '2-3-stable'
 
 gem 'coffee-rails', '~> 4.0.0'
 gem 'sass-rails', '~> 4.0.0'
 
-gem 'adyen', github: 'rovitulli/adyen', branch: '3D-Secure-support'
-#gem 'pry-rails'
+gem 'adyen', github: 'petlove/adyen', branch: '3D-Secure-support'
+
+gem 'therubyracer'
 
 gem 'vcr'
 gem 'webmock'
