@@ -257,7 +257,8 @@ module Spree
 
           unless payment.source.gateway_customer_profile_id.present?
 
-            shopper = { :reference => (payment.order.user_id.present? ? payment.order.user_id : payment.order.email),
+            shopper = { #:reference => (payment.order.user_id.present? ? payment.order.user_id : payment.order.email),
+                        :reference => payment.order.email,
                         :email => payment.order.email,
                         :ip => payment.order.last_ip_address,
                         :statement => "Order # #{payment.order.number}" }
