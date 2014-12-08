@@ -32,6 +32,7 @@ module Spree
     # this amount might be captured from customers card. See Settings > Merchant Settings
     # in Adyen dashboard
     def create_profile(payment)
+      binding.pry
       card = { encrypted: { json: payment.source.encrypted_data } }
       create_profile_on_card payment, card
     end
