@@ -175,7 +175,7 @@ module Spree
           #                       gateway_options[:email]
           #                     end
 
-          shopper_reference = { gateway_options[:email] }
+          shopper_reference = gateway_options[:email]
 
           shopper = { :reference => shopper_reference,
                       :email => gateway_options[:email],
@@ -208,7 +208,7 @@ module Spree
 
 
           binding.pry
-                    
+
           recurring_detail_reference = source.gateway_customer_profile_id
           card_cvc = source.verification_value
 
