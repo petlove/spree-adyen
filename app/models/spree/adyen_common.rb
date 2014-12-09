@@ -169,11 +169,13 @@ module Spree
 
           amount = { currency: gateway_options[:currency], value: amount }
 
-          shopper_reference = if gateway_options[:customer_id].present?
-                                gateway_options[:customer_id]
-                              else
-                                gateway_options[:email]
-                              end
+          # shopper_reference = if gateway_options[:customer_id].present?
+          #                       gateway_options[:customer_id]
+          #                     else
+          #                       gateway_options[:email]
+          #                     end
+
+          shopper_reference = { gateway_options[:email] }
 
           shopper = { :reference => shopper_reference,
                       :email => gateway_options[:email],
