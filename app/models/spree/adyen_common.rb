@@ -206,7 +206,9 @@ module Spree
 
         def decide_and_authorise(reference, amount, shopper, source, card, options)
 
-          
+
+          binding.pry
+                    
           recurring_detail_reference = source.gateway_customer_profile_id
           card_cvc = source.verification_value
 
