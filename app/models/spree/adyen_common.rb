@@ -222,7 +222,6 @@ module Spree
           
         end
 
-subl
         def create_profile_on_card(payment, card)
 
           unless payment.source.gateway_customer_profile_id.present?
