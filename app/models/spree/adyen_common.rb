@@ -175,9 +175,7 @@ module Spree
           #                       gateway_options[:email]
           #                     end
 
-          shopper_reference = gateway_options[:email]
-
-          shopper = { :reference => shopper_reference,
+          shopper = { :reference => gateway_options[:customer_document],
                       :email => gateway_options[:email],
                       :ip => gateway_options[:ip],
                       :statement => "Order # #{gateway_options[:order_id]}" }
