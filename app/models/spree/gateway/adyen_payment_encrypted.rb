@@ -22,7 +22,7 @@ module Spree
 
     def authorize(amount, source, gateway_options = {})
       card = { encrypted: { json: source.encrypted_data } }
-      binding.pry
+      
       authorize_on_card amount, source, gateway_options, card
     end
 
@@ -32,7 +32,7 @@ module Spree
     # this amount might be captured from customers card. See Settings > Merchant Settings
     # in Adyen dashboard
     def create_profile(payment)
-      binding.pry
+      
       card = { encrypted: { json: payment.source.encrypted_data } }
       create_profile_on_card payment, card
     end
