@@ -169,13 +169,13 @@ module Spree
 
           amount = { currency: gateway_options[:currency], value: amount }
 
-          # shopper_reference = if gateway_options[:customer_id].present?
-          #                       gateway_options[:customer_id]
-          #                     else
-          #                       gateway_options[:email]
-          #                     end
+          shopper_reference = if gateway_options[:customer_document].present?
+                                gateway_options[:customer_document]
+                              else
+                                gateway_options[:billing_address][:social_security]
+                              end
 
-          shopper = { :reference => gateway_options[:customer_document],
+          shopper = { :reference => shopper_reference,
                       :email => gateway_options[:email],
                       :ip => gateway_options[:ip],
                       :statement => "Order # #{gateway_options[:order_id]}" }
@@ -204,8 +204,7 @@ module Spree
 
         def decide_and_authorise(reference, amount, shopper, source, card, options)
 
-
-          
+ 
           recurring_detail_reference = source.gateway_customer_profile_id
           card_cvc = source.verification_value
 
@@ -226,6 +225,8 @@ module Spree
         def create_profile_on_card(payment, card)
 
           unless payment.source.gateway_customer_profile_id.present?
+
+            binding.pry
 
             shopper = { #:reference => (payment.order.user_id.present? ? payment.order.user_id : payment.order.email),
                         :reference => payment.order.user.document_number,
