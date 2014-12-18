@@ -233,7 +233,7 @@ module Spree
             shopper_reference = if payment.order.user.document_number.present?
                                   payment.order.user.document_number
                                 else
-                                  payment.social_security
+                                  payment.security_number
                                 end
 
             shopper = { #:reference => (payment.order.user_id.present? ? payment.order.user_id : payment.order.email),
