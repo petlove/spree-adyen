@@ -164,6 +164,8 @@ module Spree
         end
 
         def authorize_on_card(amount, source, gateway_options, card, options = { recurring: false })
+
+          binding.pry
           
           reference = gateway_options[:order_id]
 
@@ -223,6 +225,8 @@ module Spree
         end
 
         def create_profile_on_card(payment, card)
+
+          binding.pry
 
           unless payment.source.gateway_customer_profile_id.present?
 
