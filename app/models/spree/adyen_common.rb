@@ -172,7 +172,7 @@ module Spree
           shopper_reference = if gateway_options[:customer_document].present?
                                 gateway_options[:customer_document]
                               else
-                                gateway_options[:billing_address][:social_security]
+                                gateway_options[:payment_document]
                               end
 
           shopper = { :reference => shopper_reference,
@@ -226,10 +226,14 @@ module Spree
 
           unless payment.source.gateway_customer_profile_id.present?
 
-            binding.pry
+            shopper_reference = if payment.order.user.document_number.present?
+                                  payment.order.user.document_number
+                                else
+                                  payment.social_security
+                                end
 
             shopper = { #:reference => (payment.order.user_id.present? ? payment.order.user_id : payment.order.email),
-                        :reference => payment.order.user.document_number,
+                        :reference => shopper_reference,
                         :email => payment.order.email,
                         :ip => payment.order.last_ip_address,
                         :statement => "Order # #{payment.order.number}" }
