@@ -230,7 +230,7 @@ module Spree
 
             binding.pry
 
-            shopper_reference = if order.user.present? && payment.order.user.document_number.present?
+            shopper_reference = if payment.order.user.present? && payment.order.user.document_number.present?
                                     payment.order.user.document_number
                                   else
                                     payment.security_number
