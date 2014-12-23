@@ -225,16 +225,16 @@ module Spree
         end
 
         def create_profile_on_card(payment, card)
-
-          
-
+       
           unless payment.source.gateway_customer_profile_id.present?
 
-            shopper_reference = if payment.order.user.document_number.present?
-                                  payment.order.user.document_number
-                                else
-                                  payment.security_number
-                                end
+            binding.pry
+
+            shopper_reference = if order.user.present? && payment.order.user.document_number.present?
+                                    payment.order.user.document_number
+                                  else
+                                    payment.security_number
+                                  end
 
             shopper = { #:reference => (payment.order.user_id.present? ? payment.order.user_id : payment.order.email),
                         :reference => shopper_reference,
