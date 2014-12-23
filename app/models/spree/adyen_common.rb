@@ -230,11 +230,18 @@ module Spree
 
             binding.pry
 
+            #refactor
+
             shopper_reference = if payment.order.user.present? 
                                   if payment.order.user.document_number.present?
+                                    binding.pry
                                     payment.order.user.document_number
+                                  else
+                                    binding.pry
+                                    payment.security_number
                                   end
                                 else
+                                  binding.pry
                                   payment.security_number
                                 end
 
