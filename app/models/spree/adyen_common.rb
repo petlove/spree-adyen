@@ -230,11 +230,13 @@ module Spree
 
             binding.pry
 
-            shopper_reference = if payment.order.user.present? && payment.order.user.document_number.present?
+            shopper_reference = if payment.order.user.present? 
+                                  if payment.order.user.document_number.present?
                                     payment.order.user.document_number
-                                  else
-                                    payment.security_number
                                   end
+                                else
+                                  payment.security_number
+                                end
 
             shopper = { #:reference => (payment.order.user_id.present? ? payment.order.user_id : payment.order.email),
                         :reference => shopper_reference,
