@@ -216,7 +216,9 @@ module Spree
 
           if require_one_click_payment?(source, shopper) && recurring_detail_reference.present?
             provider.authorise_one_click_payment reference, amount, shopper, card_cvc, recurring_detail_reference
-          elsif source.gateway_customer_profile_id.present?
+          elsif source.gateway_customer_profile_id.present?def method_name
+            
+          end
             provider.authorise_recurring_payment reference, amount, shopper, source.gateway_customer_profile_id, nil, options
           else
             provider.authorise_payment reference, amount, shopper, card, options
@@ -232,14 +234,14 @@ module Spree
 
             shopper_reference = if payment.order.user.present? 
                                   if payment.order.user.document_number.present?
-                                    binding.pry
+                                    
                                     payment.order.user.document_number
                                   else
-                                    binding.pry
+                                    
                                     payment.security_number
                                   end
                                 else
-                                  binding.pry
+                                  
                                   payment.security_number
                                 end
 
