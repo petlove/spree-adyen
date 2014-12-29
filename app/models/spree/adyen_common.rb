@@ -285,6 +285,8 @@ module Spree
             raise RecurringDetailsNotFoundError
           end
 
+          binding.pry
+
           source.update_columns(
             month: list.details.last[:card][:expiry_date].month,
             year: list.details.last[:card][:expiry_date].year,
