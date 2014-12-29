@@ -228,8 +228,6 @@ module Spree
        
           unless payment.source.gateway_customer_profile_id.present?
 
-            binding.pry
-
             #refactor
 
             shopper_reference = if payment.order.user.present? 
