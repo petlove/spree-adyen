@@ -293,7 +293,8 @@ module Spree
             name: list.details.last[:card][:holder_name],
             cc_type: list.details.last[:variant],
             last_digits: list.details.last[:card][:number],
-            gateway_customer_profile_id: list.details.last[:recurring_detail_reference]
+            gateway_customer_profile_id: list.details.last[:recurring_detail_reference],
+            reference: shopper_reference
           )
 
           
