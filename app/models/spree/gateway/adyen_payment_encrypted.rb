@@ -21,6 +21,7 @@ module Spree
     end
 
     def authorize(amount, source, gateway_options = {})
+      binding.pry
       card = { encrypted: { json: source.encrypted_data } }
       
       authorize_on_card amount, source, gateway_options, card
@@ -31,7 +32,8 @@ module Spree
     # NOTE Ensure that your Adyen account Capture Delay is set to *manual* otherwise
     # this amount might be captured from customers card. See Settings > Merchant Settings
     # in Adyen dashboard
-    def create_profile(payment)  
+    def create_profile(payment)
+      binding.pry
       card = { encrypted: { json: payment.source.encrypted_data } }
       create_profile_on_card payment, card
     end
