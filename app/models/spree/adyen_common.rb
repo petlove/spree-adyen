@@ -212,16 +212,20 @@ module Spree
           card_cvc = source.verification_value
 
           if card_cvc.blank? && require_one_click_payment?(source, shopper)
+            binding.pry
             raise Core::GatewayError.new("You need to enter the card verificationv value")
           end
 
           if require_one_click_payment?(source, shopper) && recurring_detail_reference.present?
+            binding.pry
             provider.authorise_one_click_payment reference, amount, shopper, card_cvc, recurring_detail_reference
           elsif source.gateway_customer_profile_id.present?def method_name
             
           end
+          binding.pry
             provider.authorise_recurring_payment reference, amount, shopper, source.gateway_customer_profile_id, nil, options
           else
+          binding.pry
             provider.authorise_payment reference, amount, shopper, card, options
           end
           
