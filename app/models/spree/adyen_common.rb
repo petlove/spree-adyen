@@ -185,9 +185,7 @@ module Spree
           options.merge!({ installments: {
                             value: gateway_options[:installments]}
                           })
-
-          binding.pry
-
+ 
           response = decide_and_authorise reference, amount, shopper, source, card, options
 
           # Needed to make the response object talk nicely with Spree payment/processing api
