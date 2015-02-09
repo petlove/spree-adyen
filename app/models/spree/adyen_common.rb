@@ -215,10 +215,12 @@ module Spree
 
           binding.pry
 
-          if card_cvc.blank? && require_one_click_payment?(source, shopper)
-            binding.pry
-            raise Core::GatewayError.new("You need to enter the card verificationv value")
-          end
+          # if card_cvc.blank? && require_one_click_payment?(source, shopper)
+          #   binding.pry
+          #   raise Core::GatewayError.new("You need to enter the card verificationv value")
+          # end
+
+          binding.pry
 
           if require_one_click_payment?(source, shopper) && recurring_detail_reference.present?
             binding.pry
