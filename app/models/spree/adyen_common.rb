@@ -209,7 +209,11 @@ module Spree
           binding.pry
            
           recurring_detail_reference = source.gateway_customer_profile_id
+
+          binding.pry
           card_cvc = source.verification_value
+
+          binding.pry
 
           if card_cvc.blank? && require_one_click_payment?(source, shopper)
             binding.pry
