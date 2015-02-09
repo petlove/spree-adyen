@@ -205,36 +205,20 @@ module Spree
         end
 
         def decide_and_authorise(reference, amount, shopper, source, card, options)
-
-          binding.pry
-           
           recurring_detail_reference = source.gateway_customer_profile_id
-
-          binding.pry
           card_cvc = source.verification_value
 
-          binding.pry
+          if card_cvc.blank? && require_one_click_payment?(source, shopper)
+            raise Core::GatewayError.new("You need to enter the card verificationv value")
+          end
 
-          # if card_cvc.blank? && require_one_click_payment?(source, shopper)
-          #   binding.pry
-          #   raise Core::GatewayError.new("You need to enter the card verificationv value")
-          # end
-
-          # binding.pry
-
-          # if require_one_click_payment?(source, shopper) && recurring_detail_reference.present?
-          #   binding.pry
-          #   provider.authorise_one_click_payment reference, amount, shopper, card_cvc, recurring_detail_reference
-          # elsif source.gateway_customer_profile_id.present?def method_name
-            
-          # end
-          binding.pry
-            provider.authorise_recurring_payment reference, amount, shopper, source.gateway_customer_profile_id, nil, options
+          if require_one_click_payment?(source, shopper) && recurring_detail_reference.present?
+            provider.authorise_one_click_payment reference, amount, shopper, card_cvc, recurring_detail_reference
+          elsif source.gateway_customer_profile_id.present?
+            provider.authorise_recurring_payment reference, amount, shopper, source.gateway_customer_profile_id
           else
-          binding.pry
             provider.authorise_payment reference, amount, shopper, card, options
           end
-          
         end
 
         def create_profile_on_card(payment, card)
