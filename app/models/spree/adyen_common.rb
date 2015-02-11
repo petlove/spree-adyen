@@ -210,8 +210,6 @@ module Spree
             raise Core::GatewayError.new("You need to enter the card verificationv value")
           end
 
-          binding.pry
-
           if require_one_click_payment?(source, shopper) && recurring_detail_reference.present?
             provider.authorise_one_click_payment reference, amount, shopper, card_cvc, recurring_detail_reference
           elsif source.gateway_customer_profile_id.present?
