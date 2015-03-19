@@ -83,7 +83,7 @@ module Spree
             refusal_reason
           end
         end
-        
+
         response
       end
 
@@ -98,7 +98,7 @@ module Spree
           raise Core::GatewayError.new(response.fault_message || response.refusal_reason)
         end
 
-        
+
       end
 
       def authorise3d(md, pa_response, ip, env)
@@ -109,7 +109,7 @@ module Spree
           }
         }
 
-        
+
 
         provider.authorise3d_payment(md, pa_response, ip, browser_info)
 
@@ -134,12 +134,12 @@ module Spree
             }
           }
         end
-        
+
       end
 
       def build_amount_on_profile_creation(payment)
         { currency: payment.currency, value: payment.money.money.cents }
-        
+
       end
 
       private
@@ -160,12 +160,12 @@ module Spree
             response.error
           end
 
-          
+
         end
 
         def authorize_on_card(amount, source, gateway_options, card, options = { recurring: false })
 
-                    
+
           reference = gateway_options[:order_id]
 
           amount = { currency: gateway_options[:currency], value: amount }
@@ -181,11 +181,11 @@ module Spree
                       :ip => gateway_options[:ip],
                       :statement => "Order # #{gateway_options[:order_id]}" }
 
-          
+
           options.merge!({ installments: {
                             value: gateway_options[:installments]}
                           })
- 
+
           response = decide_and_authorise reference, amount, shopper, source, card, options
 
           # Needed to make the response object talk nicely with Spree payment/processing api
@@ -198,7 +198,7 @@ module Spree
               "#{result_code} - #{refusal_reason}"
             end
           end
-          
+
           response
         end
 
@@ -221,22 +221,22 @@ module Spree
 
         def create_profile_on_card(payment, card)
 
-                 
+
           unless payment.source.gateway_customer_profile_id.present?
 
             #refactor
 
-            shopper_reference = if payment.order.user.present? 
+            shopper_reference = if payment.order.user.present?
                                   if payment.order.user.document_number.present?
-                                    
+
                                     payment.order.user.document_number
                                   else
-                                    
-                                    payment.security_number
+
+                                    payment.document_number
                                   end
                                 else
-                                  
-                                  payment.security_number
+
+                                  payment.document_number
                                 end
 
             shopper = { #:reference => (payment.order.user_id.present? ? payment.order.user_id : payment.order.email),
@@ -290,7 +290,7 @@ module Spree
             reference: shopper_reference
           )
 
-          
+
         end
     end
 
