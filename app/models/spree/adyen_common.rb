@@ -83,7 +83,7 @@ module Spree
             refusal_reason
           end
         end
-        
+
         response
       end
 
@@ -97,8 +97,6 @@ module Spree
           logger.error("  #{response.to_yaml}")
           raise Core::GatewayError.new(response.fault_message || response.refusal_reason)
         end
-
-        
       end
 
       def authorise3d(md, pa_response, ip, env)
@@ -109,10 +107,7 @@ module Spree
           }
         }
 
-        
-
         provider.authorise3d_payment(md, pa_response, ip, browser_info)
-
       end
 
       def build_authorise_details(payment)
@@ -134,12 +129,10 @@ module Spree
             }
           }
         end
-        
       end
 
       def build_amount_on_profile_creation(payment)
         { currency: payment.currency, value: payment.money.money.cents }
-        
       end
 
       private
@@ -159,33 +152,28 @@ module Spree
           else
             response.error
           end
-
-          
         end
 
         def authorize_on_card(amount, source, gateway_options, card, options = { recurring: false })
-
-                    
           reference = gateway_options[:order_id]
 
           amount = { currency: gateway_options[:currency], value: amount }
 
-          shopper_reference = if gateway_options[:customer_document].present?
-                                gateway_options[:customer_document]
-                              else
-                                gateway_options[:payment_document]
-                              end
+          # shopper_reference = if gateway_options[:customer_document].present?
+          #                       gateway_options[:customer_document]
+          #                     else
+          #                       gateway_options[:payment_document]
+          #                     end
 
-          shopper = { :reference => shopper_reference,
+          shopper = { :reference => gateway_options[:document_number],
                       :email => gateway_options[:email],
                       :ip => gateway_options[:ip],
                       :statement => "Order # #{gateway_options[:order_id]}" }
 
-          
           options.merge!({ installments: {
                             value: gateway_options[:installments]}
                           })
- 
+
           response = decide_and_authorise reference, amount, shopper, source, card, options
 
           # Needed to make the response object talk nicely with Spree payment/processing api
@@ -198,7 +186,7 @@ module Spree
               "#{result_code} - #{refusal_reason}"
             end
           end
-          
+
           response
         end
 
@@ -220,27 +208,8 @@ module Spree
         end
 
         def create_profile_on_card(payment, card)
-
-                 
           unless payment.source.gateway_customer_profile_id.present?
-
-            #refactor
-
-            shopper_reference = if payment.order.user.present? 
-                                  if payment.order.user.document_number.present?
-                                    
-                                    payment.order.user.document_number
-                                  else
-                                    
-                                    payment.security_number
-                                  end
-                                else
-                                  
-                                  payment.security_number
-                                end
-
-            shopper = { #:reference => (payment.order.user_id.present? ? payment.order.user_id : payment.order.email),
-                        :reference => shopper_reference,
+            shopper = { :reference => payment.document_number,
                         :email => payment.order.email,
                         :ip => payment.order.last_ip_address,
                         :statement => "Order # #{payment.order.number}" }
@@ -253,10 +222,7 @@ module Spree
             if response.success?
               fetch_and_update_contract payment.source, shopper[:reference]
 
-              # Avoid this payment from being processed and so authorised again
-              # once the order transitions to complete state.
-              # See Spree::Order::Checkout for transition events
-              payment.started_processing!
+              payment.pend!
 
             elsif response.respond_to?(:enrolled_3d?) && response.enrolled_3d?
               raise Adyen::Enrolled3DError.new(response, payment.payment_method)
@@ -270,15 +236,14 @@ module Spree
           end
         end
 
-        def fetch_and_update_contract(source, shopper_reference)
+        def fetch_and_update_contract(source, document_number)
           # Adyen doesn't give us the recurring reference (token) so we
           # need to reach the api again to grab the token
-          list = provider.list_recurring_details(shopper_reference)
+          list = provider.list_recurring_details(document_number)
 
           unless list.details.present?
             raise RecurringDetailsNotFoundError
           end
-
 
           source.update_columns(
             month: list.details.last[:card][:expiry_date].month,
@@ -287,10 +252,8 @@ module Spree
             cc_type: list.details.last[:variant],
             last_digits: list.details.last[:card][:number],
             gateway_customer_profile_id: list.details.last[:recurring_detail_reference],
-            reference: shopper_reference
+            document_number: document_number
           )
-
-          
         end
     end
 
