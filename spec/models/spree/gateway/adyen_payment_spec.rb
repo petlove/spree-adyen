@@ -8,7 +8,7 @@ module Spree
 
     context "successfully authorized" do
       before do
-        subject.stub_chain(:provider, authorise_payment: response)
+        subject.stub_chain(:provider, :authorise_payment).and_return(response)
       end
 
       it "adds processing api calls to response object" do
@@ -25,6 +25,7 @@ module Spree
           email: "surf@uk.com",
           customer_id: 1,
           ip: "127.0.0.1",
+          document_number: "3333333334",
           currency: 'USD' }
       end
 
@@ -103,7 +104,7 @@ module Spree
 
       it "set payment state to processing" do
         subject.create_profile payment
-        expect(payment.state).to eq "processing"
+        expect(payment.state).to eq "pending"
       end
 
       context 'without an associated user' do
@@ -169,7 +170,7 @@ module Spree
     end
 
     context "builds authorise details" do
-      let(:payment) { double("Payment", request_env: {}) }
+      let(:payment) { double("Payment", request_env: {}, :installments => 2) }
 
       it "returns browser info when 3D secure is required" do
         expect(subject.build_authorise_details payment).to have_key :browser_info
@@ -195,7 +196,7 @@ module Spree
         user = stub_model(LegacyUser, email: "spree@example.com", id: rand(50))
         stub_model(Order, id: 1, number: "R#{Time.now.to_i}-test", email: "spree@example.com", last_ip_address: "127.0.0.1", user: user)
       end
-      
+
       it "sets profiles" do
         credit_card = CreditCard.new do |cc|
           cc.name = "Washington Braga"

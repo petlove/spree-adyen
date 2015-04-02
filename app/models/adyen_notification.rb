@@ -16,7 +16,6 @@
 #      @invoice.set_paid!
 #    end
 class AdyenNotification < ActiveRecord::Base
-
   # A notification should always include an event_code
   validates_presence_of :event_code
 
