@@ -1,5 +1,5 @@
 module Spree
-  class Gateway::AdyenPaymentEncrypted < Gateway
+  class Gateway::AdyenPaymentEncryptedOneClick < Gateway
     include AdyenCommon
 
     preference :public_key, :string

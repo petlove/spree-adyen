@@ -1,5 +1,5 @@
 module Spree
-  class Gateway::AdyenPaymentEncrypted < Gateway
+  class Gateway::AdyenPaymentEncryptedRecurring < Gateway
     include AdyenCommon
 
     preference :public_key, :string
@@ -13,10 +13,6 @@ module Spree
     end
 
     def payment_profiles_supported?
-      true
-    end
-
-    def require_one_click_payment?(source, shopper)
       true
     end
 
