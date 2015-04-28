@@ -191,47 +191,44 @@ module Spree
         end
 
         def decide_and_authorise(reference, amount, shopper, source, card, options)
-          binding.pry
           recurring_detail_reference = source.gateway_customer_profile_id
           card_cvc = source.verification_value
 
           if card_cvc.blank? && require_one_click_payment?(source, shopper)
-            binding.pry
+
             raise Core::GatewayError.new("You need to enter the card verificationv value")
           end
 
-          binding.pry
 
           if require_one_click_payment?(source, shopper) && recurring_detail_reference.present?
-            binding.pry
+
             provider.authorise_one_click_payment reference, amount, shopper, card_cvc, recurring_detail_reference
           elsif source.gateway_customer_profile_id.present?
-            binding.pry
+
             provider.authorise_recurring_payment reference, amount, shopper, source.gateway_customer_profile_id, nil, options
           else
-            binding.pry
+
             provider.authorise_payment reference, amount, shopper, card, options
           end
         end
 
         def create_profile_on_card(payment, card)
-          binding.pry
           unless payment.source.gateway_customer_profile_id.present?
             shopper = { :reference => payment.document_number,
                         :email => payment.order.email,
                         :ip => payment.order.last_ip_address,
                         :statement => "Order # #{payment.order.number}" }
 
-            binding.pry
+
 
             amount = build_amount_on_profile_creation payment
             options = build_authorise_details payment
 
-            binding.pry
+
 
             response = provider.authorise_payment payment.order.number, amount, shopper, card, options
 
-            binding.pry
+
 
             if response.success?
               fetch_and_update_contract payment.source, shopper[:reference]
@@ -256,13 +253,11 @@ module Spree
           list = provider.list_recurring_details(document_number)
 
 
-          binding.pry
 
           unless list.details.present?
             raise RecurringDetailsNotFoundError
           end
 
-          binding.pry
 
           source.update_columns(
             month: list.details.last[:card][:expiry_date].month,
