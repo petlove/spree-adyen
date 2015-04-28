@@ -3,6 +3,7 @@ module Spree
     extend ActiveSupport::Concern
 
     class RecurringDetailsNotFoundError < StandardError; end
+    class MissingCardSummaryError < StandardError; end
 
     included do
       preference :api_username, :string
@@ -148,6 +149,14 @@ module Spree
           response = authorize_on_card 0, source, options, card, { recurring: true }
 
           if response.success?
+            last_digits = response.additional_data["cardSummary"]
+            if last_digits.blank? && payment_profiles_supported?
+              note = "Payment was authorized but could not fetch last digits.
+                      Please request last digits to be sent back to support payment profiles"
+              raise Adyen::MissingCardSummaryError, note
+            end
+
+            source.last_digits = last_digits
             fetch_and_update_contract source, options[:customer_id]
           else
             response.error
@@ -158,12 +167,6 @@ module Spree
           reference = gateway_options[:order_id]
 
           amount = { currency: gateway_options[:currency], value: amount }
-
-          # shopper_reference = if gateway_options[:customer_document].present?
-          #                       gateway_options[:customer_document]
-          #                     else
-          #                       gateway_options[:payment_document]
-          #                     end
 
           shopper = { :reference => gateway_options[:document_number],
                       :email => gateway_options[:email],
@@ -231,6 +234,14 @@ module Spree
 
 
             if response.success?
+              last_digits = response.additional_data["cardSummary"]
+              if last_digits.blank? && payment_profiles_supported?
+                note = "Payment was authorized but could not fetch last digits.
+                        Please request last digits to be sent back to support payment profiles"
+                raise Adyen::MissingCardSummaryError, note
+              end
+
+              payment.source.last_digits = last_digits
               fetch_and_update_contract payment.source, shopper[:reference]
 
               payment.pend!
@@ -248,24 +259,19 @@ module Spree
         end
 
         def fetch_and_update_contract(source, document_number)
-          # Adyen doesn't give us the recurring reference (token) so we
-          # need to reach the api again to grab the token
           list = provider.list_recurring_details(document_number)
 
-
-
-          unless list.details.present?
-            raise RecurringDetailsNotFoundError
-          end
-
+          raise RecurringDetailsNotFoundError unless list.details.present?
+          card = list.details.find { |c| c[:card][:number] == source.last_digits }
+          raise RecurringDetailsNotFoundError unless card.present?
 
           source.update_columns(
-            month: list.details.last[:card][:expiry_date].month,
-            year: list.details.last[:card][:expiry_date].year,
-            name: list.details.last[:card][:holder_name],
-            cc_type: list.details.last[:variant],
-            last_digits: list.details.last[:card][:number],
-            gateway_customer_profile_id: list.details.last[:recurring_detail_reference],
+            month: card[:card][:expiry_date].month,
+            year: card[:card][:expiry_date].year,
+            name: card[:card][:holder_name],
+            cc_type: card[:variant],
+            last_digits: card[:card][:number],
+            gateway_customer_profile_id: card[:recurring_detail_reference],
             document_number: document_number
           )
         end
