@@ -202,7 +202,6 @@ module Spree
             raise Core::GatewayError.new("You need to enter the card verificationv value")
           end
 
-
           if require_one_click_payment?(source, shopper) && recurring_detail_reference.present?
 
             provider.authorise_one_click_payment reference, amount, shopper, card_cvc, recurring_detail_reference
@@ -222,16 +221,10 @@ module Spree
                         :ip => payment.order.last_ip_address,
                         :statement => "Order # #{payment.order.number}" }
 
-
-
             amount = build_amount_on_profile_creation payment
             options = build_authorise_details payment
 
-
-
             response = provider.authorise_payment payment.order.number, amount, shopper, card, options
-
-
 
             if response.success?
               last_digits = response.additional_data["cardSummary"]
