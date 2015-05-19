@@ -16,10 +16,6 @@ module Spree
       true
     end
 
-    def require_one_click_payment?(source, shopper)
-      true
-    end
-
     def actions
       %w(capture void)
     end
