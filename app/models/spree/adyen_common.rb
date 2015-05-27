@@ -212,10 +212,20 @@ module Spree
 
         def create_profile_on_card(payment, card)
           unless payment.source.gateway_customer_profile_id.present?
-            shopper = { :reference => payment.document_number,
-                        :email => payment.order.email,
-                        :ip => payment.order.last_ip_address,
-                        :statement => "Order # #{payment.order.number}" }
+            shopper = { 
+              reference: payment.document_number,
+              email: payment.order.email,
+              ip: payment.order.last_ip_address,
+              statement: "Order # #{payment.order.number}" 
+            }
+
+            if payment.order.bill_address.present?
+              shopper[:bill_address] = payment.order.bill_address.to_gateway
+            end
+
+            if payment.order.ship_address.present?
+              shopper[:ship_address] = payment.order.ship_address.to_gateway
+            end
 
             amount = build_amount_on_profile_creation payment
             options = build_authorise_details payment
