@@ -233,6 +233,9 @@ module Spree
               payment.source.last_digits = last_digits
               fetch_and_update_contract payment.source, shopper[:reference]
 
+              #sets response_code to payment object when creating profiles
+              payment.response_code = response.psp_reference
+
               payment.pend!
 
             elsif response.respond_to?(:enrolled_3d?) && response.enrolled_3d?
