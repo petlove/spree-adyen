@@ -219,12 +219,9 @@ module Spree
               statement: "Order # #{payment.order.number}" 
             }
 
-            if payment.order.bill_address.present?
-              shopper[:bill_address] = payment.order.bill_address.to_gateway
-            end
-
-            if payment.order.ship_address.present?
-              shopper[:ship_address] = payment.order.ship_address.to_gateway
+            [:bill_address, :ship_address].each do |address_type|
+              address = payment.order.send(address_type)
+              shopper[address_type] = address.to_gateway if address.present? && address.respond_to?(:to_gateway)
             end
 
             amount = build_amount_on_profile_creation payment
