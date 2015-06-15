@@ -9,7 +9,7 @@ module Spree
     end
 
     def method_type
-      'adyen_encrypted'
+      'adyen_encrypted_recurring'
     end
 
     def payment_profiles_supported?

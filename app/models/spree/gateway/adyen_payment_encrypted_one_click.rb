@@ -9,7 +9,7 @@ module Spree
     end
 
     def method_type
-      'adyen_encrypted'
+      'adyen_encrypted_one_click'
     end
 
     def payment_profiles_supported?
