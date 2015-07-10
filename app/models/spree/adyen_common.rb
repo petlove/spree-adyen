@@ -228,11 +228,11 @@ module Spree
 
         def create_profile_on_card(payment, card)
           unless payment.source.gateway_customer_profile_id.present?
-            shopper = { 
+            shopper = {
               reference: payment.document_number,
               email: payment.order.email,
               ip: payment.order.last_ip_address,
-              statement: "Order # #{payment.order.number}" 
+              statement: "Order # #{payment.order.number}"
             }
 
             [:bill_address, :ship_address].each do |address_type|
@@ -269,8 +269,14 @@ module Spree
               raise Core::GatewayError.new(response.fault_message || response.refusal_reason)
             end
 
+            record_response_spree(response, payment)
+
             response
           end
+        end
+
+        def record_response_spree(response, payment)
+          Spree::LogEntry.create!(details: response.to_yaml, source_id: payment.id, source_type: payment.class)
         end
 
         def fetch_and_update_contract(source, document_number)
