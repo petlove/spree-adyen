@@ -168,14 +168,30 @@ module Spree
 
           amount = { currency: gateway_options[:currency], value: amount }
 
-          shopper = { :reference => gateway_options[:document_number],
-                      :email => gateway_options[:email],
-                      :ip => gateway_options[:ip],
-                      :statement => "Order # #{gateway_options[:order_id]}" }
+          shopper = { reference: gateway_options[:document_number],
+                      email: gateway_options[:email],
+                      ip: gateway_options[:ip],
+                      statement: "Order # #{gateway_options[:order_id]}",
+                      social_security_number: gateway_options[:document_number]
+                    }
 
-          options.merge!({ installments: {
-                            value: gateway_options[:installments]}
-                          })
+          # It might deprecate #create_on_profile call for address
+          # TODO: review
+          { bill_address: :billing_address, ship_address: :shipping_address }.each do |address_type, key|
+            addr = gateway_options[key]
+            next if addr.nil?
+            address = {
+              street: [addr[:address1],addr[:address2]].compact.join(' '),
+              city: addr[:city],
+              state: addr[:state],
+              postal_code: addr[:zipcode],
+              country: 'BR',
+              house_number: addr[:house_number]
+            }
+            shopper[address_type] = address
+          end
+
+          options.merge!({ installments: { value: gateway_options[:installments]} })
 
           response = decide_and_authorise reference, amount, shopper, source, card, options
 
@@ -202,7 +218,7 @@ module Spree
           end
 
           if require_one_click_payment?(source, shopper) && recurring_detail_reference.present?
-            provider.authorise_one_click_payment reference, amount, shopper, card_cvc, recurring_detail_reference
+            provider.authorise_one_click_payment reference, amount, shopper, card_cvc, recurring_detail_reference, nil, options
           elsif source.gateway_customer_profile_id.present?
             provider.authorise_recurring_payment reference, amount, shopper, source.gateway_customer_profile_id, nil, options
           else
