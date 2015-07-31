@@ -90,14 +90,17 @@ module Spree
 
       def disable_recurring_contract(source)
         response = provider.disable_recurring_contract source.user_id, source.gateway_customer_profile_id
-
         if response.success?
           source.update_column :gateway_customer_profile_id, nil
         else
           logger.error(Spree.t(:gateway_error))
           logger.error("  #{response.to_yaml}")
-          raise Core::GatewayError.new(response.fault_message || response.refusal_reason)
+          raise Core::GatewayError.new(gateway_message(response))
         end
+      end
+
+      def gateway_message(response)
+        response.try(:fault_code) || (response.fault_message || response.refusal_reason)
       end
 
       def authorise3d(md, pa_response, ip, env)
@@ -266,7 +269,7 @@ module Spree
             else
               logger.error(Spree.t(:gateway_error))
               logger.error("  #{response.to_yaml}")
-              raise Core::GatewayError.new(response.fault_message || response.refusal_reason)
+              raise Core::GatewayError.new(gateway_message(response) || 'refused')
             end
 
             response
