@@ -4,8 +4,8 @@ module Adyen
     def initialize(params)
       card = params[:card].to_h.symbolize_keys
       if card[:expiry_date].is_a? Date
-        @month = card[:expiry_date].month.to_s
-        @year = card[:expiry_date].year.to_s
+        @month = card[:expiry_date].month.to_i
+        @year = card[:expiry_date].year.to_i
       end
       @name = card[:holder_name]
       @last_digits = card[:number].to_s
@@ -16,8 +16,8 @@ module Adyen
       source.is_a?(Spree::CreditCard) &&
       source.last_digits == @last_digits &&
       source.cc_type == @cc_type &&
-      source.year.to_s == @year &&
-      source.month.to_s == @month
+      source.year.to_i == @year &&
+      source.month.to_i == @month
     end
   end
 end
