@@ -13,11 +13,7 @@ module Adyen
     end
 
     def ==(source)
-      source.is_a?(Spree::CreditCard) &&
-      source.last_digits == @last_digits &&
-      source.cc_type == @cc_type &&
-      source.year.to_i == @year &&
-      source.month.to_i == @month
+      source.is_a?(Spree::CreditCard) && source.last_digits == @last_digits
     end
   end
 end

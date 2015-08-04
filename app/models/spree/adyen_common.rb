@@ -200,7 +200,11 @@ module Spree
 
           # Needed to make the response object talk nicely with Spree payment/processing api
           if response.success?
-            fetch_and_update_contract source, shopper[:reference]
+            begin
+              fetch_and_update_contract source, shopper[:reference]
+            rescue RecurringDetailsNotFoundError => e
+              Rails.logger.error("Could not update contract #{e.inspect}")
+            end
             def response.authorization; psp_reference; end
             def response.avs_result; {}; end
             def response.cvv_result; {}; end
@@ -279,7 +283,6 @@ module Spree
 
         def fetch_and_update_contract(source, document_number)
           list = provider.list_recurring_details(document_number)
-
           raise RecurringDetailsNotFoundError unless list.details.present?
           card = list.details.find { |c| ::Adyen::CardDetails.new(c) == source }
           raise RecurringDetailsNotFoundError unless card.present?
