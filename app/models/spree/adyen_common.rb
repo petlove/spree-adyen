@@ -200,6 +200,7 @@ module Spree
 
           # Needed to make the response object talk nicely with Spree payment/processing api
           if response.success?
+            fetch_and_update_contract source, shopper[:reference]
             def response.authorization; psp_reference; end
             def response.avs_result; {}; end
             def response.cvv_result; {}; end
@@ -231,11 +232,11 @@ module Spree
 
         def create_profile_on_card(payment, card)
           unless payment.source.gateway_customer_profile_id.present?
-            shopper = { 
+            shopper = {
               reference: payment.document_number,
               email: payment.order.email,
               ip: payment.order.last_ip_address,
-              statement: "Order # #{payment.order.number}" 
+              statement: "Order # #{payment.order.number}"
             }
 
             [:bill_address, :ship_address].each do |address_type|
@@ -280,7 +281,7 @@ module Spree
           list = provider.list_recurring_details(document_number)
 
           raise RecurringDetailsNotFoundError unless list.details.present?
-          card = list.details.find { |c| c[:card][:number] == source.last_digits }
+          card = list.details.find { |c| ::Adyen::CardDetails.new(c) == source }
           raise RecurringDetailsNotFoundError unless card.present?
 
           source.update_columns(
