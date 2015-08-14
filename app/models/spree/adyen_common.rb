@@ -277,8 +277,14 @@ module Spree
               raise Core::GatewayError.new(gateway_message(response) || 'refused')
             end
 
+            record_response_spree(response, payment)
+
             response
           end
+        end
+
+        def record_response_spree(response, payment)
+          Spree::LogEntry.create!(details: response.to_yaml, source_id: payment.id, source_type: payment.class)
         end
 
         def fetch_and_update_contract(source, document_number)
