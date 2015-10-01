@@ -240,6 +240,7 @@ module Spree
               reference: payment.document_number,
               email: payment.order.email,
               ip: payment.order.last_ip_address,
+              name: shopper_name(payment.order),
               statement: "Order # #{payment.order.number}"
             }
 
@@ -301,5 +302,11 @@ module Spree
 
     module ClassMethods
     end
+
+  private
+    def shopper_name(order)
+      bill_address = order.try(:bill_address)
+      { firstname: bill_address.firstname, lastname: bill_address.lastname } if bill_address
+    end 
   end
 end
