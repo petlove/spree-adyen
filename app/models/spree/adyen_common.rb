@@ -170,9 +170,9 @@ module Spree
           reference = gateway_options[:order_id]
 
           amount = { currency: gateway_options[:currency], value: amount }
-
           shopper = { reference: gateway_options[:document_number],
                       email: gateway_options[:email],
+                      name: { firstname: gateway_options[:first_name], lastname: gateway_options[:last_name]},
                       ip: gateway_options[:ip],
                       statement: "Order # #{gateway_options[:order_id]}",
                       social_security_number: gateway_options[:document_number]
