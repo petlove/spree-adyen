@@ -241,7 +241,8 @@ module Spree
               email: payment.order.email,
               ip: payment.order.last_ip_address,
               name: shopper_name(payment.order),
-              statement: "Order # #{payment.order.number}"
+              statement: "Order # #{payment.order.number}",
+              social_security_number: payment.document_number
             }
 
             [:bill_address, :ship_address].each do |address_type|
@@ -307,6 +308,6 @@ module Spree
     def shopper_name(order)
       bill_address = order.try(:bill_address)
       { firstname: bill_address.firstname, lastname: bill_address.lastname } if bill_address
-    end 
+    end
   end
 end
