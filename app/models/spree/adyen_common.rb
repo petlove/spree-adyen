@@ -175,7 +175,8 @@ module Spree
                       name: { firstname: gateway_options[:first_name], lastname: gateway_options[:last_name]},
                       ip: gateway_options[:ip],
                       statement: "Order # #{gateway_options[:order_id]}",
-                      social_security_number: gateway_options[:document_number]
+                      social_security_number: gateway_options[:document_number],
+                      telephone_number: gateway_options[:telephone_number]
                     }
 
           # It might deprecate #create_on_profile call for address
@@ -242,7 +243,8 @@ module Spree
               ip: payment.order.last_ip_address,
               name: shopper_name(payment.order),
               statement: "Order # #{payment.order.number}",
-              social_security_number: payment.document_number
+              social_security_number: payment.document_number,
+              telephone_number: payment.order.user.phone
             }
 
             [:bill_address, :ship_address].each do |address_type|
