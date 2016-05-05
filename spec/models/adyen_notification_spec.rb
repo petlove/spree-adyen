@@ -18,6 +18,10 @@ describe AdyenNotification do
       "live"=>"false" }
   end
 
+  before do
+    described_class.delete_all
+  end
+
   context "receives notification of unsucessful payment auth" do
     let(:notification) { subject.class.log(params.merge("success"=>"false")) }
 

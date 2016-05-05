@@ -244,7 +244,7 @@ module Spree
               name: shopper_name(payment.order),
               statement: "Order # #{payment.order.number}",
               social_security_number: payment.document_number,
-              telephone_number: payment.order.user.phone
+              telephone_number: payment.order.user.try(:phone)
             }
 
             [:bill_address, :ship_address].each do |address_type|
@@ -308,6 +308,8 @@ module Spree
         end
 
         def equal_cards(source, card)
+          return [source] unless source.user
+
           cards = source.user.credit_cards.where(
             last_digits: card[:card][:number],
             cc_type: card[:variant],
