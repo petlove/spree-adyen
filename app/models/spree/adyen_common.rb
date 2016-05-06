@@ -244,7 +244,7 @@ module Spree
               name: shopper_name(payment.order),
               statement: "Order # #{payment.order.number}",
               social_security_number: payment.document_number,
-              telephone_number: payment.order.user.phone
+              telephone_number: payment.order.user.try(:phone)
             }
 
             [:bill_address, :ship_address].each do |address_type|
@@ -288,18 +288,37 @@ module Spree
         def fetch_and_update_contract(source, document_number)
           list = provider.list_recurring_details(document_number)
           raise RecurringDetailsNotFoundError unless list.details.present?
+
           card = list.details.find { |c| ::Adyen::CardDetails.new(c) == source }
           raise RecurringDetailsNotFoundError unless card.present?
 
-          source.update_columns(
-            month: card[:card][:expiry_date].month,
-            year: card[:card][:expiry_date].year,
-            name: card[:card][:holder_name],
-            cc_type: card[:variant],
+          all_cards = equal_cards(source, card)
+
+          all_cards.each do |c|
+            c.update_columns(
+              month: card[:card][:expiry_date].month,
+              year: card[:card][:expiry_date].year,
+              name: card[:card][:holder_name],
+              cc_type: card[:variant],
+              last_digits: card[:card][:number],
+              gateway_customer_profile_id: card[:recurring_detail_reference],
+              document_number: document_number
+            )
+          end
+        end
+
+        def equal_cards(source, card)
+          return [source] unless source.user
+
+          cards = source.user.credit_cards.where(
             last_digits: card[:card][:number],
-            gateway_customer_profile_id: card[:recurring_detail_reference],
-            document_number: document_number
+            cc_type: card[:variant],
+            month: card[:card][:expiry_date].month.to_i,
+            year: card[:card][:expiry_date].year.to_i
           )
+
+          cards << source unless cards.include?(source)
+          cards
         end
     end
 

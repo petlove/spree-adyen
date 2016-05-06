@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'spree', github: 'petlove/spree', branch: 'custom-2.3'
+gem 'spree', github: 'petlove/spree', branch: '2-3-promotion-taxon'
 
 gem 'coffee-rails', '~> 4.0.0'
 gem 'sass-rails', '~> 4.0.0'

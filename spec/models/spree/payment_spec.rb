@@ -54,6 +54,7 @@ module Spree
           cc.month = "06"
           cc.year = "2016"
           cc.verification_value = "737"
+          cc.user = order.user
         end
       end
 
@@ -99,6 +100,7 @@ module Spree
       let(:credit_card) do
         CreditCard.create! do |cc|
           cc.encrypted_data = "weregergrewgregrewgregewrgewg"
+          cc.user = order.user
         end
       end
 
