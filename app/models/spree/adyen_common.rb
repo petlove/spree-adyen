@@ -160,7 +160,12 @@ module Spree
             end
 
             source.last_digits = last_digits
-            fetch_and_update_contract source, options[:customer_id]
+            begin
+              fetch_and_update_contract source, options[:customer_id]
+            rescue Spree::AdyenCommon::RecurringDetailsNotFoundError => e
+              Rails.logger.error("Could not update contract #{e.inspect}")
+            end
+
           else
             response.error
           end
@@ -203,7 +208,7 @@ module Spree
           if response.success?
             begin
               fetch_and_update_contract source, shopper[:reference]
-            rescue RecurringDetailsNotFoundError => e
+            rescue Spree::AdyenCommon::RecurringDetailsNotFoundError => e
               Rails.logger.error("Could not update contract #{e.inspect}")
             end
             def response.authorization; psp_reference; end
@@ -211,6 +216,7 @@ module Spree
             def response.cvv_result; {}; end
           else
             def response.to_s
+              binding.pry
               "#{result_code} - #{refusal_reason}"
             end
           end
@@ -236,6 +242,7 @@ module Spree
         end
 
         def create_profile_on_card(payment, card)
+          return if payment.pending?
           unless payment.source.gateway_customer_profile_id.present?
             shopper = {
               reference: payment.document_number,
@@ -266,7 +273,12 @@ module Spree
               end
 
               payment.source.last_digits = last_digits
-              fetch_and_update_contract payment.source, shopper[:reference]
+              begin
+                fetch_and_update_contract payment.source, shopper[:reference]
+              rescue Spree::AdyenCommon::RecurringDetailsNotFoundError => e
+                Rails.logger.error("Could not update contract #{e.inspect}")
+              end
+
 
               #sets response_code to payment object when creating profiles
               payment.response_code = response.psp_reference
@@ -287,10 +299,10 @@ module Spree
 
         def fetch_and_update_contract(source, document_number)
           list = provider.list_recurring_details(document_number)
-          raise RecurringDetailsNotFoundError unless list.details.present?
+          raise RecurringDetailsNotFoundError.new unless list.details.present?
 
           card = list.details.find { |c| ::Adyen::CardDetails.new(c) == source }
-          raise RecurringDetailsNotFoundError unless card.present?
+          raise RecurringDetailsNotFoundError.new unless card.present?
 
           all_cards = equal_cards(source, card)
 
