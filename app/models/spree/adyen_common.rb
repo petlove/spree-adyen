@@ -216,7 +216,6 @@ module Spree
             def response.cvv_result; {}; end
           else
             def response.to_s
-              binding.pry
               "#{result_code} - #{refusal_reason}"
             end
           end
