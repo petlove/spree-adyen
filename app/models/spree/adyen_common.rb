@@ -241,7 +241,7 @@ module Spree
         end
 
         def create_profile_on_card(payment, card)
-          return if payment.pending?
+          return if payment.pending? || payment.analyzing?
           unless payment.source.gateway_customer_profile_id.present?
             shopper = {
               reference: payment.document_number,
@@ -282,7 +282,7 @@ module Spree
               #sets response_code to payment object when creating profiles
               payment.response_code = response.psp_reference
 
-              payment.pend!
+              payment.pend_analyzing!
 
             elsif response.respond_to?(:enrolled_3d?) && response.enrolled_3d?
               raise Adyen::Enrolled3DError.new(response, payment.payment_method)
