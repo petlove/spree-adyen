@@ -278,11 +278,10 @@ module Spree
                 Rails.logger.error("Could not update contract #{e.inspect}")
               end
 
-
               #sets response_code to payment object when creating profiles
               payment.response_code = response.psp_reference
+              Rails.application.secrets.clearsale ? payment.pend_analyzing! : payment.pend!
 
-              payment.pend_analyzing!
 
             elsif response.respond_to?(:enrolled_3d?) && response.enrolled_3d?
               raise Adyen::Enrolled3DError.new(response, payment.payment_method)
