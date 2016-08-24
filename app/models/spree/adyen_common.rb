@@ -163,7 +163,7 @@ module Spree
             begin
               fetch_and_update_contract source, options[:customer_id]
             rescue Spree::AdyenCommon::RecurringDetailsNotFoundError => e
-              Rails.logger.error("Could not update contract #{e.inspect}")
+              Rails.logger.error("Could not update contract after set up contract #{e.inspect}")
             end
 
           else
@@ -184,6 +184,11 @@ module Spree
                       telephone_number: gateway_options[:telephone_number]
                     }
 
+          begin
+            fetch_and_update_contract source, gateway_options[:document_number]
+          rescue Spree::AdyenCommon::RecurringDetailsNotFoundError => e
+            Rails.logger.error("Could not update contract before authorize #{e.inspect}")
+          end
           # It might deprecate #create_on_profile call for address
           # TODO: review
           { bill_address: :billing_address, ship_address: :shipping_address }.each do |address_type, key|
@@ -209,7 +214,7 @@ module Spree
             begin
               fetch_and_update_contract source, shopper[:reference]
             rescue Spree::AdyenCommon::RecurringDetailsNotFoundError => e
-              Rails.logger.error("Could not update contract #{e.inspect}")
+              Rails.logger.error("Could not update contract after authorize #{e.inspect}")
             end
             def response.authorization; psp_reference; end
             def response.avs_result; {}; end
@@ -275,7 +280,7 @@ module Spree
               begin
                 fetch_and_update_contract payment.source, shopper[:reference]
               rescue Spree::AdyenCommon::RecurringDetailsNotFoundError => e
-                Rails.logger.error("Could not update contract #{e.inspect}")
+                Rails.logger.error("Could not update contract after create profile #{e.inspect}")
               end
 
               #sets response_code to payment object when creating profiles
