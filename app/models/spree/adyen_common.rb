@@ -236,6 +236,12 @@ module Spree
             raise Core::GatewayError.new("You need to enter the card verificationv value")
           end
 
+          begin
+            fetch_and_update_contract(source, reference)
+          rescue Spree::AdyenCommon::RecurringDetailsNotFoundError => e
+            Rails.logger.error("Could not update contract before authorize #{e.inspect}")
+          end
+
           if require_one_click_payment?(source, shopper) && recurring_detail_reference.present?
             provider.authorise_one_click_payment reference, amount, shopper, card_cvc, recurring_detail_reference, nil, options
           elsif source.gateway_customer_profile_id.present?
