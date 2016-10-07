@@ -133,8 +133,8 @@ module Spree
         CreditCard.create! do |cc|
           cc.name = "Spree Dev Check"
           cc.verification_value = "737"
-          cc.month = "06"
-          cc.year = "2016"
+          cc.month = "08"
+          cc.year = "2018"
           cc.number = "5555444433331111"
         end
       end
@@ -246,8 +246,8 @@ module Spree
           CreditCard.create! do |cc|
             cc.name = "Washington Braga"
             cc.number = "4212 3456 7890 1237"
-            cc.month = "06"
-            cc.year = "2016"
+            cc.month = "08"
+            cc.year = "2018"
             cc.verification_value = "737"
           end
         end

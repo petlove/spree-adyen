@@ -51,8 +51,8 @@ module Spree
         CreditCard.create! do |cc|
           cc.name = "Washington"
           cc.number = "4111111111111111"
-          cc.month = "06"
-          cc.year = "2016"
+          cc.month = "08"
+          cc.year = "2018"
           cc.verification_value = "737"
           cc.user = order.user
         end
