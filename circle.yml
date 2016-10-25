@@ -1,0 +1,10 @@
+machine:
+  ruby:
+    version: 2.1.2
+
+test:
+  pre:
+    - bundle exec rake test_app
+  override:
+    - bundle exec rspec spec --tag external
+
