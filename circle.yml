@@ -2,6 +2,10 @@ machine:
   ruby:
     version: 2.1.2
 dependencies:
+  pre:
+    - gem update bundler
+    - bundle --version
+    - gem install spree_cmd -v 3.0.3
   override:
     - bundle install
 test:
