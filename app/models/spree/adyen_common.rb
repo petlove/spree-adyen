@@ -184,11 +184,6 @@ module Spree
                       telephone_number: gateway_options[:telephone_number]
                     }
 
-          begin
-            fetch_and_update_contract source, gateway_options[:document_number]
-          rescue Spree::AdyenCommon::RecurringDetailsNotFoundError => e
-            Rails.logger.error("Could not update contract before authorize #{e.inspect}")
-          end
           # It might deprecate #create_on_profile call for address
           # TODO: review
           { bill_address: :billing_address, ship_address: :shipping_address }.each do |address_type, key|
@@ -237,9 +232,10 @@ module Spree
           end
 
           begin
-            fetch_and_update_contract(source, reference)
+            fetch_and_update_contract(source, shopper[:reference])
           rescue Spree::AdyenCommon::RecurringDetailsNotFoundError => e
-            Rails.logger.error("Could not update contract before authorize #{e.inspect}")
+            Rails.logger.error "Could not update contract before authorize, order: '#{reference}', source: '#{source.inspect}', document_number: '#{shopper[:reference]}', error: '#{e.class}', message: '#{e.message}'"
+            Rails.logger.error e.backtrace.reject { |n| n =~ /rails/ }.join("\n")
           end
 
           if require_one_click_payment?(source, shopper) && recurring_detail_reference.present?
@@ -307,10 +303,10 @@ module Spree
 
         def fetch_and_update_contract(source, document_number)
           list = provider.list_recurring_details(document_number)
-          raise RecurringDetailsNotFoundError.new unless list.details.present?
+          raise RecurringDetailsNotFoundError.new(list.inspect) unless list.details.present?
 
           card = list.details.find { |c| ::Adyen::CardDetails.new(c) == source }
-          raise RecurringDetailsNotFoundError.new unless card.present?
+          raise RecurringDetailsNotFoundError.new(source.inspect) unless card.present?
 
           all_cards = equal_cards(source, card)
 
