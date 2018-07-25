@@ -160,7 +160,12 @@ module Spree
             end
 
             source.last_digits = last_digits
-            fetch_and_update_contract source, options[:customer_id]
+            begin
+              fetch_and_update_contract source, options[:customer_id]
+            rescue Spree::AdyenCommon::RecurringDetailsNotFoundError => e
+              Rails.logger.error("Could not update contract after set up contract #{e.inspect}")
+            end
+
           else
             response.error
           end
@@ -203,8 +208,8 @@ module Spree
           if response.success?
             begin
               fetch_and_update_contract source, shopper[:reference]
-            rescue RecurringDetailsNotFoundError => e
-              Rails.logger.error("Could not update contract #{e.inspect}")
+            rescue Spree::AdyenCommon::RecurringDetailsNotFoundError => e
+              Rails.logger.error("Could not update contract after authorize #{e.inspect}")
             end
             def response.authorization; psp_reference; end
             def response.avs_result; {}; end
@@ -226,6 +231,13 @@ module Spree
             raise Core::GatewayError.new("You need to enter the card verificationv value")
           end
 
+          begin
+            fetch_and_update_contract(source, shopper[:reference])
+          rescue Spree::AdyenCommon::RecurringDetailsNotFoundError => e
+            Rails.logger.error "Could not update contract before authorize, order: '#{reference}', source: '#{source.inspect}', document_number: '#{shopper[:reference]}', error: '#{e.class}', message: '#{e.message}'"
+            Rails.logger.error e.backtrace.reject { |n| n =~ /rails/ }.join("\n")
+          end
+
           if require_one_click_payment?(source, shopper) && recurring_detail_reference.present?
             provider.authorise_one_click_payment reference, amount, shopper, card_cvc, recurring_detail_reference, nil, options
           elsif source.gateway_customer_profile_id.present?
@@ -236,6 +248,7 @@ module Spree
         end
 
         def create_profile_on_card(payment, card)
+          return if payment.pending?
           unless payment.source.gateway_customer_profile_id.present?
             shopper = {
               reference: payment.document_number,
@@ -266,11 +279,14 @@ module Spree
               end
 
               payment.source.last_digits = last_digits
-              fetch_and_update_contract payment.source, shopper[:reference]
+              begin
+                fetch_and_update_contract payment.source, shopper[:reference]
+              rescue Spree::AdyenCommon::RecurringDetailsNotFoundError => e
+                Rails.logger.error("Could not update contract after create profile #{e.inspect}")
+              end
 
               #sets response_code to payment object when creating profiles
               payment.response_code = response.psp_reference
-
               payment.pend!
 
             elsif response.respond_to?(:enrolled_3d?) && response.enrolled_3d?
@@ -278,6 +294,10 @@ module Spree
             else
               logger.error(Spree.t(:gateway_error))
               logger.error("  #{response.to_yaml}")
+              Rails.logger.error("[Spree::AdyenCommon::CreateProfileOnCard] Error creating payment. "\
+                                 "Order: #{payment.order.number} Payment identifier: #{payment.identifier} "\
+                                 "Error: #{response.try(:to_json)}"
+                )
               raise Core::GatewayError.new(gateway_message(response) || 'refused')
             end
 
@@ -287,10 +307,10 @@ module Spree
 
         def fetch_and_update_contract(source, document_number)
           list = provider.list_recurring_details(document_number)
-          raise RecurringDetailsNotFoundError unless list.details.present?
+          raise RecurringDetailsNotFoundError.new(list.inspect) unless list.details.present?
 
           card = list.details.find { |c| ::Adyen::CardDetails.new(c) == source }
-          raise RecurringDetailsNotFoundError unless card.present?
+          raise RecurringDetailsNotFoundError.new(source.inspect) unless card.present?
 
           all_cards = equal_cards(source, card)
 

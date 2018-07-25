@@ -7,7 +7,7 @@ describe AdyenNotification do
     { "pspReference" => "8513823667306210",
       "eventDate"=>"2013-10-21T14:45:45.93Z",
       "merchantAccountCode"=>"Test",
-      "reason"=>"41061:1111:6/2016",
+      "reason"=>"41061:1111:12/2018",
       "originalReference" => "",
       "value"=>"6999",
       "eventCode"=>"AUTHORISATION",
