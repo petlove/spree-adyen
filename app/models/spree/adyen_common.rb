@@ -294,6 +294,10 @@ module Spree
             else
               logger.error(Spree.t(:gateway_error))
               logger.error("  #{response.to_yaml}")
+              Rails.logger.error("[Spree::AdyenCommon::CreateProfileOnCard] Error creating payment. "\
+                                 "Order: #{payment.order.number} Payment identifier: #{payment.identifier} "\
+                                 "Error: #{response.try(:to_json)}"
+                )
               raise Core::GatewayError.new(gateway_message(response) || 'refused')
             end
 
