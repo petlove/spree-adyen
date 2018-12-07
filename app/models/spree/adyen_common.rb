@@ -203,6 +203,7 @@ module Spree
           options.merge!({ installments: { value: gateway_options[:installments]} })
 
           response = decide_and_authorise reference, amount, shopper, source, card, options
+          log_authorize_details(:authorize_on_card, reference, amount, options, response)
 
           # Needed to make the response object talk nicely with Spree payment/processing api
           if response.success?
@@ -269,6 +270,7 @@ module Spree
             options = build_authorise_details payment
 
             response = provider.authorise_payment payment.order.number, amount, shopper, card, options
+            log_authorize_details(:create_profile_on_card, "#{payment.order.number}-#{payment.identifier}", amount, options, response)
 
             if response.success?
               last_digits = response.additional_data["cardSummary"]
@@ -349,6 +351,14 @@ module Spree
     def shopper_name(order)
       bill_address = order.try(:bill_address)
       { firstname: bill_address.firstname, lastname: bill_address.lastname } if bill_address
+    end
+
+    def log_authorize_details(method_name, reference, amount, options, response)
+      order_number = reference.to_s.split('-')[0]
+      Rails.logger.info "[AdyenCommom] [#{method_name}] Order: #{order_number} MerchantReference: #{reference} amount: #{amount} options: #{options}"
+      Rails.logger.info "[AdyenCommom] [#{method_name}] Order: #{order_number} MerchantReference: #{reference} response: #{response.try(:body) if response}"
+    rescue
+      Rails.logger.error "[AdyenCommom] [#{method_name}] Order: #{order_number} MerchantReference: #{reference} amount: #{amount} ERROR WITHOUT BODY"
     end
   end
 end
