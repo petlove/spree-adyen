@@ -294,6 +294,8 @@ module Spree
             elsif response.respond_to?(:enrolled_3d?) && response.enrolled_3d?
               raise Adyen::Enrolled3DError.new(response, payment.payment_method)
             else
+              payment.response_code = response.psp_reference
+              payment.save!
               logger.error(Spree.t(:gateway_error))
               logger.error("  #{response.to_yaml}")
               Rails.logger.error("[Spree::AdyenCommon::CreateProfileOnCard] Error creating payment. "\
