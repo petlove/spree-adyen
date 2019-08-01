@@ -271,6 +271,7 @@ module Spree
 
             response = provider.authorise_payment payment.order.number, amount, shopper, card, options
             log_authorize_details(:create_profile_on_card, "#{payment.order.number}-#{payment.identifier}", amount, options, response)
+            payment.response_code = response.psp_reference if response && response.respond_to?(:psp_reference)
 
             if response.success?
               last_digits = response.additional_data["cardSummary"]
@@ -288,7 +289,6 @@ module Spree
               end
 
               #sets response_code to payment object when creating profiles
-              payment.response_code = response.psp_reference
               payment.pend!
 
             elsif response.respond_to?(:enrolled_3d?) && response.enrolled_3d?
