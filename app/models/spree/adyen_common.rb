@@ -363,6 +363,7 @@ module Spree
       order_number = reference.to_s.split('-')[0]
       Rails.logger.info "[AdyenCommom] [#{method_name}] Order: #{order_number} MerchantReference: #{reference} amount: #{amount} options: #{options}"
       Rails.logger.info "[AdyenCommom] [#{method_name}] Order: #{order_number} MerchantReference: #{reference} response: #{response.try(:body) if response}"
+      Rails.logger.info "[AdyenCommom] [#{method_name}] Order: #{order_number} InvalidCredentials: #{invalid_credentials?(response)}"
     rescue
       Rails.logger.error "[AdyenCommom] [#{method_name}] Order: #{order_number} MerchantReference: #{reference} amount: #{amount} ERROR WITHOUT BODY"
     end
