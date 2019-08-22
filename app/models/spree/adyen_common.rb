@@ -206,7 +206,7 @@ module Spree
           log_authorize_details(:authorize_on_card, reference, amount, options, response)
 
           # Needed to make the response object talk nicely with Spree payment/processing api
-          if response.success?
+          if response.success? && !invalid_credentials?(response)
             begin
               fetch_and_update_contract source, shopper[:reference]
             rescue Spree::AdyenCommon::RecurringDetailsNotFoundError => e
@@ -222,6 +222,12 @@ module Spree
           end
 
           response
+        end
+
+        INVALID_CREDENTIAL_MESSAGE = 'Credenciais Invalidas'
+
+        def invalid_credentials?(response)
+          response.refusal_reason_raw.include?(INVALID_CREDENTIAL_MESSAGE)
         end
 
         def decide_and_authorise(reference, amount, shopper, source, card, options)
@@ -273,7 +279,7 @@ module Spree
             log_authorize_details(:create_profile_on_card, "#{payment.order.number}-#{payment.identifier}", amount, options, response)
             payment.response_code = response.psp_reference if response && response.respond_to?(:psp_reference)
 
-            if response.success?
+            if response.success? && !invalid_credentials?(response)
               last_digits = response.additional_data["cardSummary"]
               if last_digits.blank? && payment_profiles_supported?
                 note = "Payment was authorized but could not fetch last digits.
