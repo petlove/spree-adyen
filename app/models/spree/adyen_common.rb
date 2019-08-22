@@ -227,7 +227,7 @@ module Spree
         INVALID_CREDENTIAL_MESSAGE = 'Credenciais Invalidas'
 
         def invalid_credentials?(response)
-          response.refusal_reason_raw.include?(INVALID_CREDENTIAL_MESSAGE)
+          response.refusal_reason_raw.to_s.include?(INVALID_CREDENTIAL_MESSAGE)
         end
 
         def decide_and_authorise(reference, amount, shopper, source, card, options)
