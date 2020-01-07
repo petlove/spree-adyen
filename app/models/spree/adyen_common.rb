@@ -224,7 +224,7 @@ module Spree
           response
         end
 
-        INVALID_MESSAGES = ['Falha na operacao', 'Credenciais Invalidas', 'Erro inesperado']
+        INVALID_MESSAGES = ['Falha na autorizacao', 'Falha na operacao', 'Credenciais Invalidas', 'Erro inesperado']
 
         def invalid_message?(response)
           INVALID_MESSAGES.find { |message| response.refusal_reason_raw.to_s.include?(message) }.present?
