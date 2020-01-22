@@ -225,6 +225,7 @@ module Spree
         end
 
         def valid_message?(response)
+          binding.pry
           response.refusal_reason_raw.to_s.include?('Transacao autorizada')
         end
 
